@@ -1,5 +1,8 @@
+import {Course} from './Course'
+
 const App = () => {
-  const course = {
+  const courses = [
+  {
     name: 'Half Stack application development',
     id: 1,
     parts: [
@@ -19,29 +22,31 @@ const App = () => {
         id: 3
       }
     ]
+  },
+  {
+    name: 'Node.js',
+      id: 2,
+      parts: [
+        {
+          name: 'Routing',
+          exercises: 3,
+          id: 1
+        },
+        {
+          name: 'Middlewares',
+          exercises: 7,
+          id: 2
+        }
+      ]
   }
+]
 
   return (
     <div>
-      <Course course={course} />
+      {courses.map(course =>
+      <Course key={course.id} name={course.name} parts={course.parts} />
+        )}
     </div>
-  )
-}
-
-const Course = ({ course }) => {
-  return (
-    <div>
-      <h1>{course.name}</h1>
-      {course.parts.map(part =>
-      <Header key={part.id} header={part.name} exercises={part.exercises} />
-      )}
-    </div>
-  )
-}
-
-const Header = (props) => {
-  return (
-    <p>{props.header} {props.exercises}</p>
   )
 }
 
