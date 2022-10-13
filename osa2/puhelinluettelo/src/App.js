@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import noteService from './services/persons'
 
-const Persons = ({ persons }) => {
+const Person = (props) => {
   return (
-    persons.map(person => (
-      <li key={person.name}>{person.name} {person.number}</li>
-    ))
+    <li key={props.id}>
+    {props.name} {props.number}
+    <button onClick={props.toggleRemove}>delete</button>
+  </li>
   )
 }
 
@@ -58,7 +58,17 @@ const App = () => {
       number: newNumber
     }
     if (persons.some(person => person.name === nameObject.name)) {
-      alert(`${newName} is already added to phonebook`)
+      if (window.confirm(`${nameObject.name} is already added to phonebook, replace the old number with a new one?`)) {
+      const samePerson = persons.find(n => n.name === nameObject.name)
+      const changedNumber = { ...samePerson, number: nameObject.number}
+      noteService
+        .update(samePerson.id, changedNumber)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => person.id !== samePerson.id ? person : returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
+      }
     } else {
       noteService
         .create(nameObject)
@@ -69,6 +79,20 @@ const App = () => {
         })
     }
   }
+
+  const removePerson = (id, name) => {
+    if (window.confirm(`Delete ${name} ?`)) {
+      noteService
+      .remove(id)
+    }
+    noteService
+      .getAll()
+      .then(response => {
+        setPersons(response)
+      })
+  }
+
+  const personsToShow = persons.filter(person => person.name.toLowerCase().includes(filter))
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -91,7 +115,14 @@ const App = () => {
       handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
       <ul>
-          <Persons persons={persons.filter(person => person.name.toLowerCase().includes(filter))}/>
+        {personsToShow.map(person => 
+          <Person
+          name={person.name}
+          id={person.id}
+          number={person.number}
+          toggleRemove={() => removePerson(person.id, person.name)}
+          />
+          )}
       </ul>
     </div>
   )
