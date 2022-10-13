@@ -37,12 +37,34 @@ const FilterForm = (props) => {
   )
 }
 
+const Notification = ({ message }) => {
+  const errorStyle = {
+    color: 'green',
+    background: 'lightgrey',
+    fontSize: '20px',
+    borderStyle: 'solid',
+    borderRadius: '5px',
+    padding: '10px',
+    marginBottom: '10px'
+  }
+
+  if (message == null) {
+    return null
+  }
+  return (
+    <div style={errorStyle}>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setNewFilter] = useState('')
-
+  const [errorMessage, setErrorMessage] = useState('')
+  
   useEffect(() => {
     noteService
       .getAll()
@@ -68,7 +90,21 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+        .catch(error => {
+          setErrorMessage(
+            `${nameObject.name} has already been removed from the server`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 2000)
+        })
       }
+      setErrorMessage(
+        `Updated ${nameObject.name}`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 2000)
     } else {
       noteService
         .create(nameObject)
@@ -77,6 +113,12 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+      setErrorMessage(
+        `Added ${nameObject.name}`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 2000)
     }
   }
 
@@ -90,6 +132,12 @@ const App = () => {
       .then(response => {
         setPersons(response)
       })
+      setErrorMessage(
+        `Removed ${name}`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 2000)
   }
 
   const personsToShow = persons.filter(person => person.name.toLowerCase().includes(filter))
@@ -109,6 +157,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={errorMessage} />
       <FilterForm filter={filter} handleFilterChange={handleFilterChange} />
       <h2>Add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} newNumber={newNumber}
