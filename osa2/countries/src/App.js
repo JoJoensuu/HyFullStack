@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import countryService from './services/countries'
+import weatherService from './services/weather'
 
-const Countries = ({countries}) => {
+const Countries = ({countries, showCountry}) => {
   if (countries.length > 10) {
     return (
       <div>
@@ -11,7 +12,7 @@ const Countries = ({countries}) => {
   } else if (countries.length === 1) {
     return (
       countries.map(country => (
-        <div>
+        <div key={country.name.common}>
           <Country country={country} />
         </div>
       ))
@@ -20,12 +21,12 @@ const Countries = ({countries}) => {
     return (
       countries.map(country => (
         <div key={country.name.common}>
-          <form onSubmit={handleFilterChange}>
           {country.name.common}
-            <button type="submit" value={country.name.common}>
+            <button
+            value={country.name.common}
+            onClick={() => showCountry(country)}>
               show
             </button>
-            </form>
           </div>
       ))
     )
@@ -33,6 +34,23 @@ const Countries = ({countries}) => {
 }
 
 const Country = ({country}) => {
+  const [temp, setTemp] = useState('')
+  const [wind, setWind] = useState('')
+  const [icon, setIcon] = useState('')
+
+  const latitude = country.capitalInfo.latlng[0]
+  const longitude = country.capitalInfo.latlng[1]
+  useEffect(() => {
+    weatherService
+      .getWeather(latitude, longitude)
+      .then(response => {
+        setTemp(response.current.temp)
+        setWind(response.current.wind_speed)
+        setIcon(response.current.weather[0].icon)
+      })
+  })
+  const iconUrl = "https://openweathermap.org/img/wn/" + icon + "@2x.png"
+
   return (
     <div key={country.name.common}>
           <h1>{country.name.common}</h1>
@@ -41,8 +59,12 @@ const Country = ({country}) => {
           <h2>languages:</h2>
           <ul>
             <Languages languages={country.languages} />
-          </ul>handleFilterChange
+          </ul>
           <img src={country.flags.png} width="200"></img>
+          <h2>Weather in {country.capital}</h2>
+          temperature {temp} Celcius<br></br>
+          <img src={iconUrl}></img><br></br>
+          wind {wind} m/s
         </div>
   )
 }
@@ -57,26 +79,38 @@ const Languages = ({languages}) => {
 
 const App = () => {
   const [countries, setCountries] = useState([])
+  const [allCountries, setAllCountries] = useState([])
   const [filter, setNewFilter] = useState('')
 
   useEffect(() => {
-    axios
-      .get('https://restcountries.com/v3.1/all')
-      .then(response => {
-        setCountries(response.data)
+    countryService
+      .getAll()
+      .then(initialCountries => {
+        setAllCountries(initialCountries)
       })
   }, [])
 
   const handleFilterChange = (event) => {
-    setNewFilter(event.target.value)
+    const newFilter = event.target.value
+    setNewFilter(newFilter)
+    setCountries(allCountries.filter(country => country.name.common.toLowerCase().includes(newFilter)))
+    console.log(countries)
+  }
+
+  const showCountry = (country) => {
+    const name = country.name.common
+    setCountries(countries.filter(country => country.name.common === name))
   }
 
   return (
     <div>
-      find countries<input value={filter} onChange={handleFilterChange}></input>
-        <Countries countries={countries.filter(country => country.name.common.toLowerCase().includes(filter))} />
+      find countries<input value={filter.toLowerCase()} onChange={handleFilterChange}></input>
+        <Countries
+        showCountry={showCountry}
+        countries={countries.filter(country => country.name.common.toLowerCase().includes(filter))}
+        />
     </div>
-  );
+  )
 }
 
 export default App;
