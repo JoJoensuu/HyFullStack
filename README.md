@@ -1,1 +1,1 @@
-[https://patient-firefly-2056.fly.dev/]
+https://patient-firefly-2056.fly.dev/
