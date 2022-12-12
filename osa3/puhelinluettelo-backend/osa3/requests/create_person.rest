@@ -1,0 +1,7 @@
+POST https://patient-firefly-2056.fly.dev/api/persons
+Content-Type: application/json
+
+{
+    "name": "Pentti Pennanen",
+    "number": "1212"
+}
