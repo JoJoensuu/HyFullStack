@@ -1,6 +1,12 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const mongoose = require('mongoose')
+
+const url =
+  `mongodb+srv://fullstack:gKC8P7RXlnFGUGuv@cluster0.kpydxyr.mongodb.net/?retryWrites=true&w=majority
+  `
+mongoose.connect(url)
 
 app.use(cors())
 app.use(express.static('build'))

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import noteService from './services/persons'
+import personService from './services/persons'
 
 const Person = (props) => {
   return (
@@ -66,7 +66,7 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState('')
   
   useEffect(() => {
-    noteService
+    personService
       .getAll()
       .then(initialPersons => {
         setPersons(initialPersons)
@@ -83,7 +83,7 @@ const App = () => {
       if (window.confirm(`${nameObject.name} is already added to phonebook, replace the old number with a new one?`)) {
       const samePerson = persons.find(n => n.name === nameObject.name)
       const changedNumber = { ...samePerson, number: nameObject.number}
-      noteService
+      personService
         .update(samePerson.id, changedNumber)
         .then(returnedPerson => {
           setPersons(persons.map(person => person.id !== samePerson.id ? person : returnedPerson))
@@ -106,12 +106,20 @@ const App = () => {
         setErrorMessage(null)
       }, 2000)
     } else {
-      noteService
+      personService
         .create(nameObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
+        })
+        .catch(error => {
+          setErrorMessage(
+            `Person validation failed`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 2000)
         })
       setErrorMessage(
         `Added ${nameObject.name}`
@@ -124,10 +132,10 @@ const App = () => {
 
   const removePerson = (id, name) => {
     if (window.confirm(`Delete ${name} ?`)) {
-      noteService
+      personService
       .remove(id)
     }
-    noteService
+    personService
       .getAll()
       .then(response => {
         setPersons(response)
