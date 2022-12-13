@@ -25,10 +25,48 @@ const favoriteBlog = (blogs) => {
     }
     return favorite
 }
+
+const mostBlogs = (blogs) => {
+    if (blogs.length === 0) {
+        return 0
+    } else if (blogs.length === 1) {
+        return {
+            author: blogs[0].author,
+            blogs: 1
+        }
+    } else {
+        const most = []
+
+        blogs.forEach((blogger)=> {
+            if (most.some((val) => {
+                return val["author"] === blogger["author"]
+            })) {
+                most.forEach((x) => {
+                    if (x["author"] === blogger["author"]) {
+                        x["blogs"] ++
+                    }
+                })
+            } else {
+                const a = {}
+                a["author"] = blogger["author"]
+                a["blogs"] = 1
+                most.push(a)
+            }
+        })
+        top = most[0]
+        most.forEach((blogger) => {
+            if (blogger["blogs"] > top["blogs"]) {
+                top = blogger
+            }
+        })
+        return top
+    }
+}
   
   module.exports = {
     dummy,
     totalLikes,
-    favoriteBlog
+    favoriteBlog,
+    mostBlogs
   }
 
