@@ -74,6 +74,24 @@ test('a valid blog can be added', async () => {
   )
 })
 
+test('if likes field is empty set likes as 0', async () => {
+  const newBlog = {
+    title: 'My fourth blog post',
+    author: 'Testi Nelonen',
+    url: 'testUrl4',
+    likes: ''
+  }
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+
+  expect(response.body[2].likes).toEqual(0)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
