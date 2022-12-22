@@ -16,13 +16,15 @@ blogsRouter.post('/', async (request, response, next) => {
       url: body.url,
       likes: body.likes || 0
     })
-    
-  
-    try {
-      const savedBlog = await blog.save()
-      response.status(201).json(savedBlog)
-    } catch(exception) {
-      next(exception)
+    if (blog.title.length === 0 || blog.url.length === 0) {
+      response.status(400).json()
+    } else {
+      try {
+        const savedBlog = await blog.save()
+        response.status(201).json(savedBlog)
+      } catch(exception) {
+        next(exception)
+      }
     }
   })
 

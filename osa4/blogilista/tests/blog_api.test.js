@@ -92,6 +92,32 @@ test('if likes field is empty set likes as 0', async () => {
   expect(response.body[2].likes).toEqual(0)
 })
 
+test('if no title return status 400', async () => {
+  const newBlog = {
+    title: '',
+    author: 'Testi Nelonen',
+    url: 'testUrl4',
+    likes: ''
+  }
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
+test('if no url return status 400', async () => {
+  const newBlog = {
+    title: 'My fourth blog post',
+    author: 'Testi Nelonen',
+    url: '',
+    likes: ''
+  }
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
