@@ -118,6 +118,19 @@ test('if no url return status 400', async () => {
     .expect(400)
 })
 
+test('delete blog returns status 204 with valid id and removes blog', async () => {
+  const response = await api.get('/api/blogs')
+  const id = response.body[1].id
+
+  await api
+    .delete(`/api/blogs/${id}`)
+    .expect(204)
+
+  const blogs = await Blog.find({})
+  const list = blogs.map(blog => blog.toJSON())
+  expect(list).toHaveLength(response.body.length - 1)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
