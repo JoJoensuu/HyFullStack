@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Minun blogini",
-    "author": "Pertti Pennanen",
+    "title": "Toinen blogini",
+    "author": "Jussi Virtanen",
     "url": "url",
-    "likes": 1
+    "likes": 13
 }
