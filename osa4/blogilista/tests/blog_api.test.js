@@ -9,11 +9,13 @@ const initialBlogs = [
     title: 'HTML is easy',
     author: 'Testi Testinen',
     url: 'testUrl',
+    likes: 1
   },
   {
     title: 'HTML is not so easy',
     author: 'Testi Kakkonen',
     url: 'testUrl2',
+    likes: 2
   },
 ]
 
@@ -34,7 +36,7 @@ test('blogs are returned as json', async () => {
 
 test('there are two blogs', async () => {
     const response = await api.get('/api/blogs')
-    expect(response.body).toHaveLength(2)
+    expect(response.body).toHaveLength(initialBlogs.length)
 })
 
 test('the first blog is my first blog', async () => {
@@ -42,6 +44,11 @@ test('the first blog is my first blog', async () => {
   
     expect(response.body[0].title).toBe('HTML is easy')
   })
+
+test('blog identifier field must be named id', async () => {
+  const response = await api.get('/api/blogs')
+  expect(response.body[0].id).toBeDefined()
+})
 
 afterAll(() => {
   mongoose.connection.close()
