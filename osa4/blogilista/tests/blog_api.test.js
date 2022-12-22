@@ -131,6 +131,23 @@ test('delete blog returns status 204 with valid id and removes blog', async () =
   expect(list).toHaveLength(response.body.length - 1)
 })
 
+test('update blog returns status 204 with correct number of likes on updated blog', async () => {
+  const response = await api.get('/api/blogs')
+  const id = response.body[1].id
+
+  const newBlog = {
+    likes: 100
+  }
+
+  await api
+    .put(`/api/blogs/${id}`)
+    .send(newBlog)
+    .expect(200)
+
+  const blogs = await api.get('/api/blogs')
+  expect(blogs.body[1].likes).toEqual(100)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
