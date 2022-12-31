@@ -3,28 +3,18 @@ const { castObject } = require('../models/blog')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const { userExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({})
   response.json(blogs)
   })
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
-  }
-  return null
-}
-
-blogsRouter.post('/', async (request, response, next) => {
+blogsRouter.post('/', userExtractor, async (request, response, next) => {
     const body = request.body
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!request.token || !decodedToken.id) {
-      return response.status(401).json({ error: 'token missing or invalid '})
-    }
 
-    const user = await User.findById(decodedToken.id)
+
+    const user = request.user
 
     const blog = new Blog({
       title: body.title,
@@ -47,12 +37,8 @@ blogsRouter.post('/', async (request, response, next) => {
     }
   })
 
-blogsRouter.delete('/:id', async (request, response, next) => {
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!request.token || !decodedToken.id) {
-      return response.status(401).json({ error: 'token missing or invalid '})
-    }
-    const user = await User.findById(decodedToken.id)
+blogsRouter.delete('/:id', userExtractor, async (request, response, next) => {
+    const user = request.user
     const blog = await Blog.findById(request.params.id)
     if ( user._id.toString() === blog.user.toString() ) {
       try {
@@ -66,7 +52,7 @@ blogsRouter.delete('/:id', async (request, response, next) => {
     }
 })
 
-blogsRouter.put('/:id', async (request, response, next) => {
+blogsRouter.put('/:id', userExtractor, async (request, response, next) => {
     const body = request.body
 
     const blog = {
