@@ -44,7 +44,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('wrong credentials')
+      setErrorMessage('wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -68,9 +68,14 @@ const App = () => {
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
+        setErrorMessage(`a new blog ${newTitle} by ${newAuthor} added`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
         setNewTitle('')
         setNewAuthor('')
         setNewUrl('')
+        
       })
   }
 
