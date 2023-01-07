@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Notification from './components/Notification'
@@ -102,12 +102,21 @@ const App = () => {
   const showBlogs = () => (
     <div>
       {blogs.map(blog => 
-          <Blog key={blog.id} blog={blog} />
+          <Blog
+            key={blog.id}
+            blog={blog}
+          />
         )}
     </div>
   )
 
+  const blogFormRef = useRef()
 
+  const blogForm = () => (
+    <Togglable buttonLabel='new blog' ref={blogFormRef}>
+      <BlogForm createBlog={addBlog}/>
+    </Togglable>
+  )
 
   return (
     <div>
@@ -125,14 +134,8 @@ const App = () => {
       }
       {user === null ?
         <p>&nbsp;</p> :
-        <Togglable buttonLabel='new blog'>
-          <BlogForm
-            createBlog={addBlog}
-          />
-        </Togglable>
+        blogForm()
       }
-      
-      
     </div>
   )
 }
