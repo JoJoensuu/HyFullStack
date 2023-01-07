@@ -67,6 +67,25 @@ const App = () => {
       })
   }
 
+  const removeBlog = id => {
+    blogService
+      .remove(id)
+      .then(
+        setBlogs(blogs.filter(note => note.id !== id))
+      )
+  }
+
+  const updateBlogLikes = id => {
+    const blog = blogs.find(blog => blog.id === id)
+    const changedBlog = { ...blog, likes: blog.likes + 1 }
+
+    blogService
+      .update(id, changedBlog)
+      .then(returnedBlog => {
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+      })
+  }
+
   const loginForm = () => (
       <form onSubmit={handleLogin}>
         <div>
@@ -105,6 +124,8 @@ const App = () => {
           <Blog
             key={blog.id}
             blog={blog}
+            deleteBlog={() => removeBlog(blog.id)}
+            addLike={() => updateBlogLikes(blog.id)}
           />
         )}
     </div>
@@ -114,7 +135,10 @@ const App = () => {
 
   const blogForm = () => (
     <Togglable buttonLabel='new blog' ref={blogFormRef}>
-      <BlogForm createBlog={addBlog}/>
+      <BlogForm
+        createBlog={addBlog}
+        deleteBlog={removeBlog}
+      />
     </Togglable>
   )
 
