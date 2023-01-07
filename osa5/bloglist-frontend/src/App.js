@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Notification from './components/Notification'
 import loginService from './services/login'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,6 +14,7 @@ const App = () => {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
+  const [blogFormVisible, setBlogFormVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -75,7 +77,7 @@ const App = () => {
         setNewTitle('')
         setNewAuthor('')
         setNewUrl('')
-        
+        setBlogFormVisible(false)
       })
   }
 
@@ -131,23 +133,30 @@ const App = () => {
     </div>
   )
 
-  const blogForm = () => (
-    <form onSubmit={addBlog}>
-      title:<input
-        value={newTitle}
-        onChange={handleTitleChange}
-      /><br></br>
-      author:<input
-        value={newAuthor}
-        onChange={handleAuthorChange}
-      /><br></br>
-      url:<input
-        value={newUrl}
-        onChange={handleUrlChange}
-      /><br></br>
-      <button type="submit">create</button>
-    </form>
-  )
+  const blogForm = () => {
+    const hideWhenVisible = { display: blogFormVisible ? 'none' : '' }
+    const showWhenVisible = { display: blogFormVisible ? '' : 'none' }
+
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setBlogFormVisible(true)}>create blog</button>
+        </div>
+        <div style={showWhenVisible}>
+          <BlogForm
+            newTitle={newTitle}
+            newAuthor={newAuthor}
+            newUrl={newUrl}
+            handleTitleChange={({ target }) => setNewTitle(target.value)}
+            handleAuthorChange={({ target }) => setNewAuthor(target.value)}
+            handleUrlChange={({ target }) => setNewUrl(target.value)}
+            addBlog={addBlog}
+          />
+          <button onClick={() => setBlogFormVisible(false)}>cancel</button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div>
