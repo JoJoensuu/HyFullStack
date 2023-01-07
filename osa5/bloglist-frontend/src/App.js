@@ -118,18 +118,22 @@ const App = () => {
     </form>
   )
 
-  const showBlogs = () => (
-    <div>
-      {blogs.map(blog => 
-          <Blog
-            key={blog.id}
-            blog={blog}
-            deleteBlog={() => removeBlog(blog.id)}
-            addLike={() => updateBlogLikes(blog.id)}
-          />
-        )}
-    </div>
-  )
+  const showBlogs = () => {
+    const blogsToShow = blogs.sort((a, b) => b.likes - a.likes)
+
+    return (
+      <div>
+        {blogsToShow.map(blog => 
+            <Blog
+              key={blog.id}
+              blog={blog}
+              deleteBlog={() => removeBlog(blog.id)}
+              addLike={() => updateBlogLikes(blog.id)}
+            />
+          )}
+      </div>
+    )
+  }
 
   const blogFormRef = useRef()
 
