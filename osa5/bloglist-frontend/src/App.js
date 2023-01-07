@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import Notification from './components/Notification'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -11,10 +12,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
-  const [blogFormVisible, setBlogFormVisible] = useState(false)
+
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -57,40 +55,16 @@ const App = () => {
     window.localStorage.clear()
   }
 
-  const addBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl,
-      likes: 0,
-    }
-
+  const addBlog = (blogObject) => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        setErrorMessage(`a new blog ${newTitle} by ${newAuthor} added`)
+        setErrorMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
         setTimeout(() => {
           setErrorMessage(null)
         }, 5000)
-        setNewTitle('')
-        setNewAuthor('')
-        setNewUrl('')
-        setBlogFormVisible(false)
       })
-  }
-
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value)
-  }
-
-  const handleAuthorChange = (event) => {
-    setNewAuthor(event.target.value)
-  }
-
-  const handleUrlChange = (event) => {
-    setNewUrl(event.target.value)
   }
 
   const loginForm = () => (
@@ -133,36 +107,14 @@ const App = () => {
     </div>
   )
 
-  const blogForm = () => {
-    const hideWhenVisible = { display: blogFormVisible ? 'none' : '' }
-    const showWhenVisible = { display: blogFormVisible ? '' : 'none' }
 
-    return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setBlogFormVisible(true)}>create blog</button>
-        </div>
-        <div style={showWhenVisible}>
-          <BlogForm
-            newTitle={newTitle}
-            newAuthor={newAuthor}
-            newUrl={newUrl}
-            handleTitleChange={({ target }) => setNewTitle(target.value)}
-            handleAuthorChange={({ target }) => setNewAuthor(target.value)}
-            handleUrlChange={({ target }) => setNewUrl(target.value)}
-            addBlog={addBlog}
-          />
-          <button onClick={() => setBlogFormVisible(false)}>cancel</button>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div>
       <h1>Blogs</h1>
       
       <Notification message={errorMessage}/>
+
       {user === null ?
         loginForm() :
         showBlogs()
@@ -173,7 +125,11 @@ const App = () => {
       }
       {user === null ?
         <p>&nbsp;</p> :
-        blogForm()
+        <Togglable buttonLabel='new blog'>
+          <BlogForm
+            createBlog={addBlog}
+          />
+        </Togglable>
       }
       
       
