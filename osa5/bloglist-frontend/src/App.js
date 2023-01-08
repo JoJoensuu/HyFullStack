@@ -72,6 +72,10 @@ const App = () => {
             .then(
                 setBlogs(blogs.filter(note => note.id !== id))
             )
+        setErrorMessage('blog successfully removed from database')
+        setTimeout(() => {
+            setErrorMessage(null)
+        }, 5000)
     }
 
     const updateBlogLikes = id => {

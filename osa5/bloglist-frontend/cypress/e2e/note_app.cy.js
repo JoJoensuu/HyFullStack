@@ -52,15 +52,32 @@ describe('Blog app', function() {
             cy.contains('create').click()
             cy.contains('A blog for testing')
         })
+    })
 
-        it('A blog can be liked', function() {
+    describe('When blog created', function() {
+        beforeEach(function() {
+            cy.get('#username').type('mmattinen')
+            cy.get('#password').type('salainen')
+            cy.get('#login-button').click()
+            cy.contains('Matti Mattinen logged in')
+
             cy.contains('new blog').click()
             cy.get('#title-form').type('A blog for testing')
             cy.get('#author-form').type('Cypress')
             cy.get('#url-form').type('testing url')
             cy.contains('create').click()
+            cy.contains('A blog for testing')
+        })
+
+        it('A blog can be liked', function() {
             cy.contains('view').click()
             cy.contains('like').click()
+        })
+
+        it('A blog can be removed by user that added it', function() {
+            cy.contains('view').click()
+            cy.contains('delete').click()
+            cy.contains('blog successfully removed from database')
         })
     })
 })
