@@ -152,6 +152,9 @@ const App = () => {
             <h1>Blogs</h1>
 
             <Notification message={errorMessage}/>
+            {user === null ?
+                <p>&nbsp;</p> :
+                <p>{user.name} logged in</p>}
 
             {user === null ?
                 loginForm() :
