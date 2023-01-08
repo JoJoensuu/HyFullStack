@@ -21,7 +21,7 @@ const Blog = ({ blog, user, deleteBlog, addLike }) => {
             <div className="blog">
                 {blog.title} {blog.author}
                 <div style={hideWhenVisible}>
-                    <button onClick={() => setInfoVisible(true)}>view</button>
+                    <button id='set-visible' onClick={() => setInfoVisible(true)}>view</button>
                 </div>
                 <div style={deleteVisible}>
                     <button onClick={deleteBlog}>delete</button>
@@ -30,7 +30,7 @@ const Blog = ({ blog, user, deleteBlog, addLike }) => {
             <div className="hiddeninfo" style={showWhenVisible}>
                 {blog.url}<br/>
               likes {blog.likes}
-                <button onClick={addLike}>like</button>
+                <button id='like-blog' onClick={addLike}>like</button>
                 <br/>
                 {blog.user.name}<br/>
                 <button onClick={() => setInfoVisible(false)}>hide</button>
