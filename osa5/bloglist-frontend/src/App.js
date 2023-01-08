@@ -5,6 +5,7 @@ import Notification from './components/Notification'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import userService from './services/users'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
@@ -12,11 +13,17 @@ const App = () => {
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
     const [errorMessage, setErrorMessage] = useState(null)
-
+    const [users, setUsers] = useState([])
 
     useEffect(() => {
         blogService.getAll().then(blogs =>
             setBlogs( blogs )
+        )
+    }, [])
+
+    useEffect(() => {
+        userService.getAll().then(users =>
+            setUsers( users )
         )
     }, [])
 
@@ -129,7 +136,7 @@ const App = () => {
                         blog={blog}
                         deleteBlog={() => removeBlog(blog.id)}
                         addLike={() => updateBlogLikes(blog.id)}
-                        user={user}
+                        user={users.find(u => u.id === blog.user)}
                     />
                 )}
             </div>
@@ -142,7 +149,6 @@ const App = () => {
         <Togglable buttonLabel='new blog' ref={blogFormRef}>
             <BlogForm
                 createBlog={addBlog}
-                deleteBlog={removeBlog}
             />
         </Togglable>
     )

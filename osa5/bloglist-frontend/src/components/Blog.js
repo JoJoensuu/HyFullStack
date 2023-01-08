@@ -6,7 +6,7 @@ const Blog = ({ blog, user, deleteBlog, addLike }) => {
     const showWhenVisible = { display: infoVisible ? '' : 'none' }
 
     const sameUser = blog.user === user.id
-    const deleteVisible = { display: sameUser ? 'none' : '' }
+    const deleteVisible = { display: sameUser ? '' : 'none' }
 
     const blogStyle = {
         paddingTop: 10,
@@ -32,7 +32,7 @@ const Blog = ({ blog, user, deleteBlog, addLike }) => {
               likes {blog.likes}
                 <button onClick={addLike}>like</button>
                 <br/>
-                {blog.user}<br/>
+                {user.name}<br/>
                 <button onClick={() => setInfoVisible(false)}>hide</button>
             </div>
         </div>
