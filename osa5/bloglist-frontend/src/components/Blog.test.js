@@ -1,6 +1,7 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 test('renders content', () => {
@@ -23,4 +24,31 @@ test('renders content', () => {
 
     expect(element).toBeDefined()
 
+})
+
+test('clicking button shows url, likes and user', async () => {
+    const blog = {
+        title: 'Component testing is done with react-testing-library',
+        author: 'Janne Jannenen',
+        url: 'https://www.yle.fi',
+        likes: 0,
+        user: '123'
+    }
+    const user = {
+        username: 'testuser',
+        name: 'tester',
+        id: '123'
+    }
+
+    const { container } = render(
+        <Blog blog={blog} user={user}/>
+    )
+    const div = container.querySelector('.hiddeninfo')
+    expect(div).toHaveStyle('display: none')
+
+    const testUser = userEvent.setup()
+    const button = screen.getByText('view')
+    await testUser.click(button)
+
+    expect(div).toHaveStyle('display: inline')
 })
