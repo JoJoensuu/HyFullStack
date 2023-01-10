@@ -12,12 +12,11 @@ const Anecdote = ({ anecdote, addVote }) => {
 
 const Anecdotes = () => {
     const dispatch = useDispatch()
-    const anecdotes = useSelector(state => state)
-    const anecdotesToShow = anecdotes.sort((a, b) => b.votes - a.votes)
+    const anecdotes = useSelector(state => state.anecdotes)
 
     return (
         <ul>
-            {anecdotesToShow.map(anecdote => 
+            {anecdotes.map(anecdote => 
                 <Anecdote
                     key={anecdote.id}
                     anecdote={anecdote}
