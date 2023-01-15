@@ -9,7 +9,6 @@
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand --forceExit",
     "lint": "eslint .",
     "start:test": "cross-env NODE_ENV=test nodemon index.js"
-
   },
   "author": "",
   "license": "ISC",
