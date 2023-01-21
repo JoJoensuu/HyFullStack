@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
+import User from './components/User'
 import blogService from './services/blogs'
+import userService from './services/users'
 import { setNotification } from './reducers/notificationReducer'
 import Notification from './components/Notification'
 import loginService from './services/login'
@@ -13,12 +15,19 @@ const App = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
+    const [users, setUsers] = useState([])
 
     const dispatch = useDispatch()
 
     useEffect(() => {
         blogService.getAll().then(blogs =>
             setBlogs( blogs )
+        )
+    }, [])
+
+    useEffect(() => {
+        userService.getAll().then(users =>
+            setUsers( users )
         )
     }, [])
 
@@ -166,6 +175,26 @@ const App = () => {
                 <p>&nbsp;</p> :
                 blogForm()
             }
+            <h1>Users</h1>
+            <table>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>
+                                    blogs created
+                                </td>
+                            </tr>
+                            {users.map(user =>
+                                <User key={user.id}
+                                    user={user}
+                                />
+                            )}
+                        </table>
+                    </td>
+                </tr>
+            </table>
         </div>
     )
 }
