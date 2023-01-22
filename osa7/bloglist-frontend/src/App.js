@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link, useParams } from 'react-router-dom'
-import Blog from './components/Blog'
 import UserList from './components/UserList'
 import blogService from './services/blogs'
 import userService from './services/users'
@@ -133,13 +132,11 @@ const App = () => {
         return (
             <div>
                 {blogsToShow.map(blog =>
-                    <Blog
-                        key={blog.id}
-                        blog={blog}
-                        deleteBlog={() => removeBlog(blog.id)}
-                        addLike={() => updateBlogLikes(blog.id)}
-                        user={user}
-                    />
+                    <div key={blog.id}>
+                        <div className="blog">
+                            <Link to={`api/blogs/${blog.id}`}>{blog.title}</Link>
+                        </div>
+                    </div>
                 )}
             </div>
         )
@@ -165,6 +162,25 @@ const App = () => {
                         getInfo={<Link to={`api/users/${user.id}`}>{user.name}</Link>}
                     />
                 )}
+            </div>
+        )
+    }
+
+    const BlogToView = ({ blogs }) => {
+        const id = useParams().id
+        const blog = blogs.find(b => b.id === id)
+        if (!blog) {
+            return null
+        }
+        return (
+            <div>
+                <h1>{blog.title} {blog.author}</h1>
+                <p>{blog.url}</p>
+                <p>{blog.likes} likes</p>
+                <button onClick={() => updateBlogLikes(blog.id)}>like</button>
+                <br/>
+                <p>added by {blog.user.name}</p>
+                <button onClick={() => removeBlog(blog.id)}>delete</button>
             </div>
         )
     }
@@ -203,11 +219,12 @@ const App = () => {
                         }
                         {user === null ?
                             loginForm() :
-                            [showBlogs(), logoutForm(), blogForm(), showUsers()]
+                            [logoutForm(), showBlogs(), blogForm(), showUsers()]
                         }
                     </div>
                 } />
                 <Route path="api/users/:id" element={<UserToView users={users}/>}/>
+                <Route path="api/blogs/:id" element={<BlogToView blogs={blogs}/>}/>
             </Routes>
         </Router>
     )
