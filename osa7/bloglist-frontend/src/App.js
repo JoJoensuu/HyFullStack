@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link, useParams } from 'react-router-dom'
 import Blog from './components/Blog'
-import User from './components/User'
+import UserList from './components/UserList'
 import blogService from './services/blogs'
 import userService from './services/users'
 import { setNotification } from './reducers/notificationReducer'
@@ -159,28 +160,56 @@ const App = () => {
             <div>
                 <h1>Users</h1>
                 {users.map(user =>
-                    <User key={user.id}
+                    <UserList key={user.id}
                         user={user}
+                        getInfo={<Link to={`api/users/${user.id}`}>{user.name}</Link>}
                     />
                 )}
             </div>
         )
     }
 
-    return (
-        <div>
-            <h1>Blogs</h1>
+    const UserToView = ({ users }) => {
+        const id = useParams().id
+        const user = users.find(u => u.id === id)
+        if (!user) {
+            return null
+        }
+        return (
+            <div>
+                <h1>{user.name}</h1>
+                <h2>added blogs</h2>
+                <ul>
+                    {user.blogs.map(blog =>
+                        <li key={blog.id}>
+                            {blog.title}
+                        </li>
+                    )}
+                </ul>
+            </div>
+        )
+    }
 
-            <Notification />
-            {user === null ?
-                <p>&nbsp;</p> :
-                <p>{user.name} logged in</p>
-            }
-            {user === null ?
-                loginForm() :
-                [showBlogs(), logoutForm(), blogForm(), showUsers()]
-            }
-        </div>
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={
+                    <div>
+                        <h1>Blogs</h1>
+                        <Notification />
+                        {user === null ?
+                            <p>&nbsp;</p> :
+                            <p>{user.name} logged in</p>
+                        }
+                        {user === null ?
+                            loginForm() :
+                            [showBlogs(), logoutForm(), blogForm(), showUsers()]
+                        }
+                    </div>
+                } />
+                <Route path="api/users/:id" element={<UserToView users={users}/>}/>
+            </Routes>
+        </Router>
     )
 }
 export default App

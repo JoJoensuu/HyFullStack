@@ -1,26 +1,12 @@
-const User = ({ user }) => {
-    const userStyle = {
-        paddingRight: 20,
-    }
+import { BrowserRouter as useParams } from 'react-router-dom'
+
+const User = ({ users }) => {
+    const id = useParams().id
+    const user = users.find(u => u.id === id)
 
     return (
         <div>
-            <tr>
-                <td>
-                    &nbsp;
-                </td>
-                <td>
-                    <b>blogs created</b>
-                </td>
-            </tr>
-            <tr>
-                <td style={userStyle} key={user.id}>
-                    {user.name}
-                </td>
-                <td>
-                    {user.blogs.length}
-                </td>
-            </tr>
+            {user.name}
         </div>
     )
 }
