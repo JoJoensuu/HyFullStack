@@ -159,7 +159,7 @@ const App = () => {
                 {users.map(user =>
                     <UserList key={user.id}
                         user={user}
-                        getInfo={<Link to={`api/users/${user.id}`}>{user.name}</Link>}
+                        getInfo={<Link to={`/${user.id}`}>{user.name}</Link>}
                     />
                 )}
             </div>
@@ -206,27 +206,43 @@ const App = () => {
         )
     }
 
-    return (
-        <Router>
-            <Routes>
-                <Route path="/" element={
-                    <div>
-                        <h1>Blogs</h1>
-                        <Notification />
-                        {user === null ?
-                            <p>&nbsp;</p> :
+    const loggedInView = () => {
+        return (
+            <Router>
+                <div className="navPanel">
+                    <Link to="/">blogs</Link>
+                    &nbsp;
+                    <Link to="api/users/">users</Link>
+                    &nbsp;
+                    {user.name} logged in
+                    &nbsp;
+                    {logoutForm()}
+                </div>
+                <Routes>
+                    <Route path="/" element={
+                        <div>
+                            <h1>Blogs</h1>
+                            <Notification />
                             <p>{user.name} logged in</p>
-                        }
-                        {user === null ?
-                            loginForm() :
-                            [logoutForm(), showBlogs(), blogForm(), showUsers()]
-                        }
-                    </div>
-                } />
-                <Route path="api/users/:id" element={<UserToView users={users}/>}/>
-                <Route path="api/blogs/:id" element={<BlogToView blogs={blogs}/>}/>
-            </Routes>
-        </Router>
+                            {showBlogs()}
+                            {blogForm()}
+                        </div>
+                    } />
+                    <Route path="/:id" element={<UserToView users={users}/>}/>
+                    <Route path="api/blogs/:id" element={<BlogToView blogs={blogs}/>}/>
+                    <Route path="api/users/" element={showUsers()}/>
+                </Routes>
+            </Router>
+        )
+    }
+
+    return (
+        <div>
+            {user === null ?
+                loginForm() :
+                loggedInView()
+            }
+        </div>
     )
 }
 export default App

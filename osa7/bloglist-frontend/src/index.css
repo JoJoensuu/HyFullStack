@@ -8,3 +8,7 @@ h1 {
     padding-top: 5px;
     font-size: 15px;
   }
+
+  .navPanel {
+    background-color: lightgrey;
+  }
