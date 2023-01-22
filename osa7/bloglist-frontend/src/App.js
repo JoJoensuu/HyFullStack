@@ -154,6 +154,19 @@ const App = () => {
         </Togglable>
     )
 
+    const showUsers = () => {
+        return (
+            <div>
+                <h1>Users</h1>
+                {users.map(user =>
+                    <User key={user.id}
+                        user={user}
+                    />
+                )}
+            </div>
+        )
+    }
+
     return (
         <div>
             <h1>Blogs</h1>
@@ -161,40 +174,12 @@ const App = () => {
             <Notification />
             {user === null ?
                 <p>&nbsp;</p> :
-                <p>{user.name} logged in</p>}
-
+                <p>{user.name} logged in</p>
+            }
             {user === null ?
                 loginForm() :
-                showBlogs()
+                [showBlogs(), logoutForm(), blogForm(), showUsers()]
             }
-            {user === null ?
-                <p>&nbsp;</p> :
-                logoutForm()
-            }
-            {user === null ?
-                <p>&nbsp;</p> :
-                blogForm()
-            }
-            <h1>Users</h1>
-            <table>
-                <tr>
-                    <td>
-                        <table>
-                            <tr>
-                                <td>&nbsp;</td>
-                                <td>
-                                    blogs created
-                                </td>
-                            </tr>
-                            {users.map(user =>
-                                <User key={user.id}
-                                    user={user}
-                                />
-                            )}
-                        </table>
-                    </td>
-                </tr>
-            </table>
         </div>
     )
 }

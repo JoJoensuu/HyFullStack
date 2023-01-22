@@ -4,14 +4,24 @@ const User = ({ user }) => {
     }
 
     return (
-        <tr>
-            <td style={userStyle} key={user.id}>
-                {user.name}
-            </td>
-            <td>
-                {user.blogs.length}
-            </td>
-        </tr>
+        <div>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <b>blogs created</b>
+                </td>
+            </tr>
+            <tr>
+                <td style={userStyle} key={user.id}>
+                    {user.name}
+                </td>
+                <td>
+                    {user.blogs.length}
+                </td>
+            </tr>
+        </div>
     )
 }
 
