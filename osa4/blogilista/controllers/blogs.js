@@ -1,8 +1,6 @@
 const blogsRouter = require('express').Router()
-const { castObject } = require('../models/blog')
+const Comment = require('../models/comment')
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
 const { userExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
@@ -23,7 +21,8 @@ blogsRouter.post('/', userExtractor, async (request, response, next) => {
       author: body.author,
       url: body.url,
       likes: body.likes || 0,
-      user: user._id
+      user: user._id,
+      comments: body.comments || []
     })
     if (blog.title.length === 0 || blog.url.length === 0) {
       response.status(400).json()
@@ -78,5 +77,29 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 })
 
+blogsRouter.get('/:id/comments', async (request, response) => {
+  const blog = await Blog.findById(request.params.id)
+  if (blog) {
+    console.log(blog.comments)
+    response.json(blog.comments)
+  } else {
+    response.status(404).end()
+  }
+})
+
+blogsRouter.post('/:id/comments', async (request, response, next) => {
+  const comments = request.body.comments
+  const blog = {
+    comments: comments
+  }
+
+  try {
+    const savedComment = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+    response.json(savedComment)
+  } catch(error) {
+    next(error)
+  }
+
+})
 
 module.exports = blogsRouter
