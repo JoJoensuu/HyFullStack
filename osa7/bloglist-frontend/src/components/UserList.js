@@ -1,3 +1,5 @@
+import { Table } from 'react-bootstrap'
+
 const UserList = ({ user, getInfo }) => {
     const userStyle = {
         paddingRight: 20,
@@ -5,7 +7,7 @@ const UserList = ({ user, getInfo }) => {
 
     return (
         <div>
-            <table>
+            <Table striped>
                 <tbody>
                     <tr>
                         <td>
@@ -24,7 +26,7 @@ const UserList = ({ user, getInfo }) => {
                         </td>
                     </tr>
                 </tbody>
-            </table>
+            </Table>
         </div>
     )
 }

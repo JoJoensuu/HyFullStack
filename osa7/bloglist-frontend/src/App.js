@@ -9,6 +9,7 @@ import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import { useDispatch } from 'react-redux'
+import { Table, Form, Button } from 'react-bootstrap'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
@@ -93,52 +94,51 @@ const App = () => {
     }
 
     const loginForm = () => (
-        <form onSubmit={handleLogin}>
-            <div>
-          username
-                <input
+        <Form onSubmit={handleLogin}>
+            <Form.Group>
+                <Form.Label>username:</Form.Label>
+                <Form.Control
                     id='username'
                     type="text"
-                    value={username}
                     name="Username"
-                    onChange={({ target }) => setUsername(target.value)}>
-                </input>
-            </div>
-            <div>
-          password
-                <input
+                    value={username}
+                    onChange={({ target }) => setUsername(target.value)}
+                />
+                <Form.Label>password:</Form.Label>
+                <Form.Control
                     id='password'
                     type="password"
                     value={password}
-                    name="Password"
-                    onChange={({ target }) => setPassword(target.value)}>
-                </input>
-            </div>
-            <button id='login-button' type="submit">login</button>
-        </form>
+                    onChange={({ target }) => setPassword(target.value)}
+                />
+            </Form.Group>
+            <Button variant="primary" id='login-button' type="submit">login</Button>
+        </Form>
     )
 
     const logoutForm = () => (
-        <form onSubmit={handleLogout}>
+        <Form onSubmit={handleLogout}>
             <div>
-                <button type="submit">logout</button>
+                <Button variant="primary" type="submit">logout</Button>
             </div>
-        </form>
+        </Form>
     )
 
     const showBlogs = () => {
         const blogsToShow = blogs.sort((a, b) => b.likes - a.likes)
 
         return (
-            <div>
-                {blogsToShow.map(blog =>
-                    <div key={blog.id}>
-                        <div className="blog">
-                            <Link to={`api/blogs/${blog.id}`}>{blog.title}</Link>
-                        </div>
-                    </div>
-                )}
-            </div>
+            <Table striped>
+                <tbody>
+                    {blogsToShow.map(blog =>
+                        <tr key={blog.id}>
+                            <td className="blog">
+                                <Link to={`api/blogs/${blog.id}`}>{blog.title}</Link>
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </Table>
         )
     }
 
@@ -177,10 +177,18 @@ const App = () => {
                 <h1>{blog.title} {blog.author}</h1>
                 <p>{blog.url}</p>
                 <p>{blog.likes} likes</p>
-                <button onClick={() => updateBlogLikes(blog.id)}>like</button>
+                <Button onClick={() => updateBlogLikes(blog.id)}>like</Button>
                 <br/>
                 <p>added by {blog.user.name}</p>
-                <button onClick={() => removeBlog(blog.id)}>delete</button>
+                <h2>comments</h2>
+                <ul>
+                    {blog.comments.map(comment =>
+                        <li key={comment._id}>
+                            {comment.content}
+                        </li>
+                    )}
+                </ul>
+                <Button onClick={() => removeBlog(blog.id)}>delete</Button>
             </div>
         )
     }
@@ -208,31 +216,33 @@ const App = () => {
 
     const loggedInView = () => {
         return (
-            <Router>
-                <div className="navPanel">
-                    <Link to="/">blogs</Link>
-                    &nbsp;
-                    <Link to="api/users/">users</Link>
-                    &nbsp;
-                    {user.name} logged in
-                    &nbsp;
-                    {logoutForm()}
-                </div>
-                <Routes>
-                    <Route path="/" element={
-                        <div>
-                            <h1>Blogs</h1>
-                            <Notification />
-                            <p>{user.name} logged in</p>
-                            {showBlogs()}
-                            {blogForm()}
-                        </div>
-                    } />
-                    <Route path="/:id" element={<UserToView users={users}/>}/>
-                    <Route path="api/blogs/:id" element={<BlogToView blogs={blogs}/>}/>
-                    <Route path="api/users/" element={showUsers()}/>
-                </Routes>
-            </Router>
+            <div className="container">
+                <Router>
+                    <div className="navPanel">
+                        <Link to="/">blogs</Link>
+                        &nbsp;
+                        <Link to="api/users/">users</Link>
+                        &nbsp;
+                        {user.name} logged in
+                        &nbsp;
+                        {logoutForm()}
+                    </div>
+                    <Routes>
+                        <Route path="/" element={
+                            <div>
+                                <h1>Blogs</h1>
+                                <Notification />
+                                <p>{user.name} logged in</p>
+                                {showBlogs()}
+                                {blogForm()}
+                            </div>
+                        } />
+                        <Route path="/:id" element={<UserToView users={users}/>}/>
+                        <Route path="api/blogs/:id" element={<BlogToView blogs={blogs}/>}/>
+                        <Route path="api/users/" element={showUsers()}/>
+                    </Routes>
+                </Router>
+            </div>
         )
     }
 
