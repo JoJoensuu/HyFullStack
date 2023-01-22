@@ -1,5 +1,4 @@
 const blogsRouter = require('express').Router()
-const Comment = require('../models/comment')
 const Blog = require('../models/blog')
 const { userExtractor } = require('../utils/middleware')
 
