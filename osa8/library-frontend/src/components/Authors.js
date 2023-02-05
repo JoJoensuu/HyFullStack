@@ -1,3 +1,5 @@
+import AuthorForm from './AuthorForm'
+
 const Authors = (props) => {
   if (props.authors.loading) {
     return <div>loading...</div>
@@ -27,6 +29,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
+      <AuthorForm />
     </div>
   )
 }
