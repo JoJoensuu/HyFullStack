@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server')
+const { startStandaloneServer } = require('@apollo/server/standalone')
 const { v1: uuid } = require('uuid')
 
 let authors = [
@@ -26,20 +27,6 @@ let authors = [
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
 ]
-
-/*
- * Suomi:
- * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
- * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
- *
- * English:
- * It might make more sense to associate a book with its author by storing the author's id in the context of the book instead of the author's name
- * However, for simplicity, we will store the author's name in connection with the book
- *
- * Spanish:
- * Podría tener más sentido asociar un libro con su autor almacenando la id del autor en el contexto del libro en lugar del nombre del autor
- * Sin embargo, por simplicidad, almacenaremos el nombre del autor en conección con el libro
-*/
 
 let books = [
   {
@@ -93,19 +80,38 @@ let books = [
   },
 ]
 
+const mongoose = require('mongoose')
+mongoose.set('strictQuery', false)
+const Author = require('./models/author')
+const Book = require('./models/book')
+
+require('dotenv').config()
+
+const MONGODB_URI = process.env.MONGODB_URI
+
+console.log('connecting to ', MONGODB_URI)
+
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connection to MongoDB:', error.message)
+  })
+
 const typeDefs = gql`
   type Book {
     title: String!
-    author: String!
+    author: Author!
     published: Int!
     genres: [String]!
+    id: ID!
   }
 
   type Author {
     name: String!
-    id: String!
     born: Int
-    bookCount: Int
+    id: ID!
   }
 
   type Query {
@@ -121,7 +127,11 @@ const typeDefs = gql`
       author: String!
       published: Int!
       genres: [String]!
-    ): Book
+    ): Book!
+    addAuthor(
+      name: String!
+      born: Int!
+    ): Author!
     editAuthor(
       name: String!
       setBornTo: Int!
@@ -131,9 +141,10 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, args) => {
+    bookCount: () => Book.collection.countDocuments(),
+    authorCount: () => Author.collection.countDocuments(),
+    allBooks: async (root, args) => {
+      /*
       returnedBooks = books
       if (args.author) {
         returnedBooks = returnedBooks.filter(b => b.author === args.author)
@@ -141,10 +152,14 @@ const resolvers = {
       if (args.genre) {
         returnedBooks = returnedBooks.filter(b => b.genres.includes(args.genre))
       }
-      return returnedBooks
+      return returnedBooks*/
+      return Book.find({})
     },
-    allAuthors: () => authors
+    allAuthors: async () => {
+      return Author.find({})
+    }
   },
+  /*
   Author: {
     name: (root) => root.name,
     bookCount: (root) => {
@@ -153,17 +168,27 @@ const resolvers = {
         booksByAuthor.length
       )
     }
-  },
+  },*/
   Mutation: {
-    addBook: (root, args) => {
-      if (!authors.find(a => a.name === args.author)) {
-        const author = { name: args.author, id: uuid() }
-        authors = authors.concat(author)
+    addBook: async (root, args) => {
+      const author = await Author.findOne({ name: args.author })
+      if(!author) {
+        author = new Author({ name: args.author })
+        await author.save()
       }
-      const book = { ...args, id: uuid() }
-      books = books.concat(book)
-      return book
+      const book = new Book({
+        title: args.title,
+        published: args.published,
+        author: author,
+        genres: args.genres
+      })
+      return book.save()
     },
+    addAuthor: async (root, args) => {
+      const author = new Author({ ...args })
+      return author.save()
+    }
+    /*,
     editAuthor: (root, args) => {
       const author = authors.find(a => a.name === args.name)
       if (!author) {
@@ -173,7 +198,7 @@ const resolvers = {
       const updatedAuthor = { ...author, born: args.setBornTo }
       authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
       return updatedAuthor
-    }
+    }*/
   }
 }
 
