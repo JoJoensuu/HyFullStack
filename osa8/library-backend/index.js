@@ -112,6 +112,7 @@ const typeDefs = gql`
     name: String!
     born: Int
     id: ID!
+    authorsBookCount: Int
   }
 
   type Query {
@@ -128,10 +129,7 @@ const typeDefs = gql`
       published: Int!
       genres: [String]!
     ): Book!
-    addAuthor(
-      name: String!
-      born: Int!
-    ): Author!
+
     editAuthor(
       name: String!
       setBornTo: Int!
@@ -144,36 +142,27 @@ const resolvers = {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
-      /*
-      returnedBooks = books
-      if (args.author) {
-        returnedBooks = returnedBooks.filter(b => b.author === args.author)
-      }
-      if (args.genre) {
-        returnedBooks = returnedBooks.filter(b => b.genres.includes(args.genre))
-      }
-      return returnedBooks*/
-      return Book.find({})
+      return await Book.find({}).populate('author')
     },
     allAuthors: async () => {
       return Author.find({})
     }
   },
-  /*
   Author: {
-    name: (root) => root.name,
-    bookCount: (root) => {
-      const booksByAuthor = books.filter(book => book.author === root.name)
-      return (
-        booksByAuthor.length
-      )
+    authorsBookCount: async (root) => {
+      const books = await Book.find({}).populate('author')
+      return books.reduce((amount, book) => {
+        return book.author.name === root.name ? amount + 1 : amount
+      }, 0)
     }
-  },*/
+  },
   Mutation: {
     addBook: async (root, args) => {
-      const author = await Author.findOne({ name: args.author })
+      let author = await Author.findOne({ name: args.author })
+      console.log(args.author)
       if(!author) {
         author = new Author({ name: args.author })
+        console.log(author)
         await author.save()
       }
       const book = new Book({
@@ -184,21 +173,11 @@ const resolvers = {
       })
       return book.save()
     },
-    addAuthor: async (root, args) => {
-      const author = new Author({ ...args })
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
+      author.born = args.setBornTo
       return author.save()
     }
-    /*,
-    editAuthor: (root, args) => {
-      const author = authors.find(a => a.name === args.name)
-      if (!author) {
-        return null
-      }
-
-      const updatedAuthor = { ...author, born: args.setBornTo }
-      authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
-      return updatedAuthor
-    }*/
   }
 }
 
