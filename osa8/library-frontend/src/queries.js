@@ -1,16 +1,26 @@
 import { gql } from '@apollo/client'
 
-export const QUERY = gql`
+export const ALL_AUTHORS = gql`
   query {
     allAuthors {
       name
       born
+      authorsBookCount
       id
-      bookCount
     }
+  }
+`
+
+export const ALL_BOOKS = gql`
+  query {
     allBooks {
       title
-      author
+      author {
+        name
+        born
+        authorsBookCount
+      }
+      genres
       published
     }
   }
@@ -37,7 +47,7 @@ export const EDIT_AUTHOR_BORN = gql`
             name
             born
             id
-            bookCount
+            authorsBookCount
         }
     }
 `
