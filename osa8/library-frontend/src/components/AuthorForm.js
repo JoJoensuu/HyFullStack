@@ -7,7 +7,12 @@ const AuthorForm = ({ authors }) => {
     const [name, setName] = useState('')
     const [born, setBorn] = useState('')
 
-    const [ editBorn ] = useMutation(EDIT_AUTHOR_BORN)
+    const [ editBorn ] = useMutation(EDIT_AUTHOR_BORN, {
+        onError: (error) => {
+            const errors = error.graphQLErrors[0].message
+            console.log(errors)
+        }
+    })
 
     const submit = async (event) => {
         event.preventDefault()

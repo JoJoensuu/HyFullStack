@@ -7,7 +7,7 @@ const Authors = (props) => {
   if (!props.show) {
     return null
   }
-  
+
   const authors = props.authors.data.allAuthors
 
   return (
@@ -29,7 +29,9 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <AuthorForm authors={authors} />
+      {props.token &&
+        <AuthorForm authors={authors} />
+      }
     </div>
   )
 }

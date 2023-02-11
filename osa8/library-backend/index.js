@@ -197,8 +197,10 @@ const resolvers = {
         })
       }
       let author = await Author.findOne({ name: args.author })
+      console.log(author)
       if(!author) {
         author = new Author({ name: args.author })
+        console.log(author)
         try {
           await author.save()
         } catch (error) {
@@ -231,7 +233,7 @@ const resolvers = {
       }
       return book
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
       const currentUser = context.currentUser
       if (!currentUser) {
         throw new GraphQLError('not authenticated', {
@@ -242,7 +244,18 @@ const resolvers = {
       }
       const author = await Author.findOne({ name: args.name })
       author.born = args.setBornTo
-      return author.save()
+      try {
+        await author.save()
+      } catch (error) {
+        throw new GraphQLError('Editing author failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error
+          }
+        })
+      }
+      return author
     },
     createUser: async (root, args) => {
       const user = new User({
