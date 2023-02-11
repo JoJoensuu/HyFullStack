@@ -1,10 +1,14 @@
 const Recommendations = (props) => {
-    const favoriteGenre = props.user.data.me.favoriteGenre
-    const books = props.books.data.allBooks.filter(book => book.genres.includes(favoriteGenre))
-
+    
+    
+    if (props.books.loading || props.user.loading) {
+        return null
+    }
     if (!props.show) {
         return null
     }
+    const favoriteGenre = props.user.data.me.favoriteGenre
+    const books = props.books.data.allBooks
 
     return (
         <div>
