@@ -18,8 +18,3 @@ export const calculateBmi = (height: number, weight: number): string => {
     }
     return 'Obese (Class III)';
 };
-
-const height = Number(process.argv[2]);
-const weight = Number(process.argv[3]);
-
-console.log(calculateBmi(height, weight));

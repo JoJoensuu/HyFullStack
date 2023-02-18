@@ -8,19 +8,23 @@ interface Result {
     average: number;
 }
 
-interface ParseHours {
+export interface IParseHours {
     testTarget: number;
     testHours: number[]
 }
 
-const parseArguments = (args: string[]): ParseHours => {
-    const parsedArray = args.slice(3).map(h => parseFloat(h));
-    if (isNaN(Number(args[2]))) {
-        throw new Error('Provided values must be numbers!');
+export const parseArguments = (target: number, exercise_hours: number[]): IParseHours => {
+    if (isNaN(target)) {
+        throw new Error('malformatted parameters');
     }
+    exercise_hours.forEach(hour => {
+        if (typeof hour !== "number") {
+            throw new Error('malformatted parameters');
+        }
+    });
     return {
-        testTarget: Number(args[2]),
-        testHours: parsedArray
+        testTarget: Number(target),
+        testHours: exercise_hours
     };
 };
 
@@ -40,13 +44,13 @@ const ratingDescription = (rating: number): string => {
     } return 'excellent work';
 };
 
-const calculateExercises = (target: number, hours: number[]): Result => {
+export const calculateExercises = (target: number, hours: number[]): Result => {
     const cumulativeHours = hours.reduce((cumulative, hours) => cumulative + hours, 0);
     const trainingDays = hours.reduce((cumulative, hours) => hours !== 0 ? cumulative + 1 : cumulative, 0);
     const average = cumulativeHours / hours.length;
-    if (isNaN(Number(average))) {
+    /*if (isNaN(Number(average))) {
         throw new Error('Provided values were not numbers!');
-    }
+    }*/
     return {
         periodLength: hours.length,
         trainingDays: trainingDays,
@@ -57,7 +61,7 @@ const calculateExercises = (target: number, hours: number[]): Result => {
         average: cumulativeHours / hours.length,
     };
 };
-
+/*
 try {
     const { testTarget, testHours } = parseArguments(process.argv);
     console.log(calculateExercises(testTarget, testHours));
@@ -68,3 +72,4 @@ try {
     }
     console.log(errorMessage);
 }
+*/
