@@ -1,0 +1,7 @@
+
+{
+    "eslint.workingDirectories": [
+      "./project1",
+      "./project2"
+    ]
+  }
