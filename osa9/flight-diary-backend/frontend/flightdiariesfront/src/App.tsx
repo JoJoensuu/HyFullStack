@@ -49,22 +49,45 @@ const App = () => {
       {errorMessage && <h2 style={{ color: 'red' }}>{errorMessage}</h2>}
       <form onSubmit={diaryCreation}>
         date<input
+          type="date"
           value={newDate}
           onChange={(event) => setNewDate(event.target.value)}
         /><br></br>
-        weather<input
-          value={newWeather}
-          onChange={(event) => setNewWeather(event.target.value)}
-        /><br></br>
-        visibility<input
-          value={newVisibility}
-          onChange={(event) => setNewVisibility(event.target.value)}
-        /><br></br>
-        comment<input
+        weather
+        <br/>
+        {Object.values(Weather).map((weatherOption) => (
+          <label key={weatherOption}>
+            <input 
+              type="radio"
+              value={weatherOption}
+              checked={newWeather === weatherOption}
+              onChange={(event => setNewWeather(event.target.value))}
+            />
+            {weatherOption}
+          </label>
+        ))}
+        <br />
+        visibility
+        <br/>
+        {Object.values(Visibility).map((visibilityOption) => (
+          <label key={visibilityOption}>
+            <input 
+              type="radio"
+              value={visibilityOption}
+              checked={newVisibility === visibilityOption}
+              onChange={(event => setNewVisibility(event.target.value))}
+            />
+            {visibilityOption}
+          </label>
+        ))}
+        <br/>
+        comment
+        <br />
+        <input
           value={newComment}
           onChange={(event) => setNewComment(event.target.value)}
-        /><br></br>
-        <br></br>
+        />
+        <br/>
         <button type='submit'>Add</button>
       </form>
       <h1>Diary entries</h1>
