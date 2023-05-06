@@ -8,6 +8,7 @@ const App = () => {
   const [newWeather, setNewWeather] = useState('');
   const [newVisibility, setNewVisibility] = useState('');
   const [newComment, setNewComment] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     axios.get<DiaryEntry[]>('http://localhost:3000/api/diaries').then(response => {
@@ -27,7 +28,13 @@ const App = () => {
       const response = await axios.post<DiaryEntry>('http://localhost:3000/api/diaries', diaryToAdd);
       setDiaries(diaries.concat(response.data));
     } catch(error) {
-      console.error('Error creating diary entry:', error);
+      if (axios.isAxiosError(error)) {
+        const message = (error.response?.data || 'An unexpected error occurred.');
+        setErrorMessage(message);
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 5000);
+      }
     }
 
     setNewDate('')
@@ -39,6 +46,7 @@ const App = () => {
   return (
     <div>
       <h1>Add new entry</h1>
+      {errorMessage && <h2 style={{ color: 'red' }}>{errorMessage}</h2>}
       <form onSubmit={diaryCreation}>
         date<input
           value={newDate}
