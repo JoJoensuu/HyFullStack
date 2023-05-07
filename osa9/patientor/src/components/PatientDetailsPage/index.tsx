@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Patient, Entry } from '../../types';
+import { Patient, Entry, Diagnosis } from '../../types';
 
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 
 import patientService from '../../services/patients';
+import diagnosisService from '../../services/diagnoses';
 
 interface RouteParams extends Record<string, string> {
     id: string;
@@ -16,19 +17,8 @@ interface RouteParams extends Record<string, string> {
 const PatientDetailsPage: React.FC = () => {
     const { id } = useParams<RouteParams>();
     const [patient, setPatient] = useState<Patient | null>(null);
+    const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
 
-    const renderGenderIcon = (gender: string) => {
-        switch (gender) {
-          case 'male':
-            return <MaleIcon />;
-          case 'female':
-            return <FemaleIcon />;
-          case 'other':
-          default:
-            return <TransgenderIcon />;
-        }
-      };
-  
     useEffect(() => {
         if (id) {
           const fetchPatient = async () => {
@@ -42,23 +32,49 @@ const PatientDetailsPage: React.FC = () => {
           fetchPatient();
         }
       }, [id]);
-    
-      if (!patient) {
-        return <div>Loading patient details...</div>;
-      }
 
-const renderEntry = (entry: Entry) => (
-    <div key={entry.id}>
-        <p>{entry.date} <i>{entry.description}</i></p>
-        {entry.diagnosisCodes && (
-            <ul>
-                {entry.diagnosisCodes.map((code) => (
-                    <li key={code}>{code}</li>
-                ))}
-            </ul>
-        )}
-    </div>
-);
+    useEffect(() => {
+        const fetchDiagnoses = async () => {
+            try {
+                const fetchedDiagnoses = await diagnosisService.getAll();
+                setDiagnoses(fetchedDiagnoses);
+            } catch (error) {
+                console.error('Error fetching diagnoses:', error);
+            }
+        };
+        fetchDiagnoses();
+    }, []);
+    
+    if (!patient) {
+        return <div>Loading patient details...</div>;
+    }
+
+    const renderEntry = (entry: Entry) => (
+        <div key={entry.id}>
+            <p>{entry.date} <i>{entry.description}</i></p>
+            {entry.diagnosisCodes && (
+                <ul>
+                    {entry.diagnosisCodes.map((code) => (
+                        <li key={code}>
+                            {code} {diagnoses.find((diagnosis) => diagnosis.code === code)?.name}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+
+    const renderGenderIcon = (gender: string) => {
+        switch (gender) {
+          case 'male':
+            return <MaleIcon />;
+          case 'female':
+            return <FemaleIcon />;
+          case 'other':
+          default:
+            return <TransgenderIcon />;
+        }
+      };
   
     return (
       <div>
