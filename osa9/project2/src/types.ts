@@ -28,6 +28,11 @@ interface HospitalEntry extends BaseEntry {
     };
 }
 
+export type Entry =
+    | HospitalEntry
+    | OccupationalHealthCareEntry
+    | HealthCheckEntry;
+
 export interface Patient {
     id: string;
     name: string;
@@ -61,11 +66,6 @@ interface HealthCheckEntry extends BaseEntry {
     type: "HealthCheck";
     healthCheckRating: HealthCheckRating;
 }
-
-export type Entry =
-    | HospitalEntry
-    | OccupationalHealthCareEntry
-    | HealthCheckEntry;
 
 export type NonSensitivePatient = Omit<Patient, 'ssn'>;
 

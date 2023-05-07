@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Patient } from '../../types';
+import { Patient, Entry } from '../../types';
 
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
@@ -46,12 +46,27 @@ const PatientDetailsPage: React.FC = () => {
       if (!patient) {
         return <div>Loading patient details...</div>;
       }
+
+const renderEntry = (entry: Entry) => (
+    <div key={entry.id}>
+        <p>{entry.date} <i>{entry.description}</i></p>
+        {entry.diagnosisCodes && (
+            <ul>
+                {entry.diagnosisCodes.map((code) => (
+                    <li key={code}>{code}</li>
+                ))}
+            </ul>
+        )}
+    </div>
+);
   
     return (
       <div>
         <h2>{patient.name} {renderGenderIcon(patient.gender)}</h2>
         <p>SSN: {patient.ssn}</p>
         <p>Occupation: {patient.occupation}</p>
+        <h2>entries</h2>
+        {patient.entries.map((entry) => renderEntry(entry))}
       </div>
     );
   };
