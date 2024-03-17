@@ -77,7 +77,6 @@ const RepositoryList = () => {
       renderItem={({ item }: { item: IRepository}) => (
         <RepositoryItem item={item}/>
       )}
-      style={{ marginTop: 20}}
     />
   );
 };
