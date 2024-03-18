@@ -1,5 +1,48 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, StyleSheet, Image } from 'react-native';
+
+const styles = StyleSheet.create({
+  topRow: {
+    flexDirection: 'row',
+    padding: 10,
+    paddingRight: 20,
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly'
+  },
+  nameBar: {
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  avatarImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 4,
+  },
+  fullName: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    paddingBottom: 5,
+  },
+  description: {
+    color: '#606060',
+    paddingBottom: 5,
+    numbreOfLines: 1,
+    ellipsizeMode: 'tail',
+    paddingRight: 10,
+  },
+  languageBlock: {
+    backgroundColor: '#0366d6',
+    padding: 3,
+    alignSelf: 'flex-start',
+    borderRadius: 4,
+  },
+  language: {
+    color: '#FFF',
+    fontSize: 15,
+  },
+})
 
 interface IRepositoryItem {
   item: {
@@ -10,19 +53,47 @@ interface IRepositoryItem {
     forksCount: number;
     reviewCount: number;
     ratingAverage: number;
+    ownerAvatarUrl: string;
   }
 }
 
 export const RepositoryItem: React.FC<IRepositoryItem> = ({ item }) => {
     return (
         <View>
-          <Text>Full name: {item.fullName}</Text>
-          <Text>Description: {item.description}</Text>
-          <Text>Language: {item.language}</Text>
-          <Text>Stars: {item.stargazersCount}</Text>
-          <Text>Forks: {item.forksCount}</Text>
-          <Text>Reviews: {item.reviewCount}</Text>
-          <Text>Rating: {item.ratingAverage}</Text>
+          <View style={styles.topRow}>
+            <Image
+              style={styles.avatarImage}
+              source={{
+                uri: item.ownerAvatarUrl,
+              }}
+            />
+            <View style={styles.nameBar}>
+              <Text style={styles.fullName}>{item.fullName}</Text>
+              <Text style={styles.description}>{item.description}</Text>
+              <View style={styles.languageBlock}>
+                <Text style={styles.language}>{item.language}</Text>
+              </View>
+            </View>
+            
+          </View>
+          <View style={styles.bottomRow}>
+              <View>
+                <Text style={styles.fullName}>{item.stargazersCount}</Text>
+                <Text>Stars</Text>
+              </View>
+              <View>
+                <Text style={styles.fullName}>{item.forksCount}</Text>
+                <Text>Forks</Text>
+              </View>
+              <View>
+                <Text style={styles.fullName}>{item.reviewCount}</Text>
+                <Text>Reviews</Text>
+              </View>
+              <View>
+                <Text style={styles.fullName}>{item.ratingAverage}</Text>
+                <Text>Rating</Text>
+              </View>
+          </View>
         </View>
       );
 }
