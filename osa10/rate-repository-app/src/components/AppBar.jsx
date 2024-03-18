@@ -20,7 +20,7 @@ const AppBar = () => {
                 <AppBarTab text={'Repositories'}/>
             </Link>
             <Link to="/signin">
-                <AppBarTab text={'Sign In'}/>
+                <AppBarTab text={'Sign in'}/>
             </Link>
         </ScrollView>
     </View>
