@@ -1,8 +1,8 @@
-import { Text, Pressable, Alert, StyleSheet, View } from 'react-native'
+import { Text, StyleSheet, View } from 'react-native'
 
 const styles = StyleSheet.create({
-    appBar: {
-        paddingTop: 10,
+    appBarTab: {
+        padding: 10,
     },
     text: {
         color: '#FFFFFF',
@@ -10,12 +10,10 @@ const styles = StyleSheet.create({
       }
 })
 
-const AppBarTab = () => {
+const AppBarTab = ({text}) => {
     return (
-        <View style={styles.appBar}>
-            <Pressable onPress={() => Alert.alert('Hello!')}>
-                <Text style={styles.text}>Repositories</Text>
-            </Pressable>
+        <View style={styles.appBarTab}>
+                <Text style={styles.text}>{text}</Text>
         </View>
     )
 }

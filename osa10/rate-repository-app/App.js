@@ -1,19 +1,17 @@
-import AppBar from "./src/components/AppBar";
-import RepositoryList from "./src/components/RepositoryList";
-import { View, StyleSheet } from 'react-native'
+import { NativeRouter } from "react-router-native";
+import { StatusBar } from 'expo-status-bar';
 
-const styles = StyleSheet.create({
-  main: {
-    backgroundColor: '#e1e4e8',
-  }
-})
+import Main from "./src/components/Main";
 
 const App = () => {
   return (
-    <View>
-      <AppBar />
-      <RepositoryList style={styles.main} />
-    </View>
+    <>
+      <NativeRouter>
+        <Main />
+      </NativeRouter>
+      <StatusBar style="auto" />
+    </>
+    
   );
 };
 

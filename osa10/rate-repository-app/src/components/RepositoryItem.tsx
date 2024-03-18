@@ -42,6 +42,9 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 15,
   },
+  itemMain: {
+    backgroundColor: '#FFF',
+  }
 })
 
 interface IRepositoryItem {
@@ -59,7 +62,7 @@ interface IRepositoryItem {
 
 export const RepositoryItem: React.FC<IRepositoryItem> = ({ item }) => {
     return (
-        <View>
+        <View style={styles.itemMain}>
           <View style={styles.topRow}>
             <Image
               style={styles.avatarImage}
