@@ -28,8 +28,6 @@ const styles = StyleSheet.create({
   description: {
     color: '#606060',
     paddingBottom: 5,
-    numbreOfLines: 1,
-    ellipsizeMode: 'tail',
     paddingRight: 10,
   },
   languageBlock: {
