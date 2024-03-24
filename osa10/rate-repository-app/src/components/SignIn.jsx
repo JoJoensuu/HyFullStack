@@ -1,6 +1,7 @@
 import { StyleSheet, View, Button } from 'react-native';
 import { Formik } from 'formik';
 import FormikTextInput from './TextInput';
+import useSignIn from '../hooks/useSignIn';
 import * as yup from 'yup';
 
 
@@ -26,10 +27,6 @@ const validationSchema = yup.object().shape({
   password: yup
     .string()
     .required('Please Enter your password')
-    .matches(
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
-      "Must Contain 8 Characters: One Uppercase, One Lowercase, One Number and one special case Character"
-    )
 });
 
 const LoginForm = ({ onSubmit }) => {
@@ -45,8 +42,15 @@ const LoginForm = ({ onSubmit }) => {
 };
 
 const SignIn = () => {
-  const onSubmit = (values) => {
-    console.log(values);
+  const [signIn] = useSignIn();
+
+  const onSubmit = async ({ username, password }) => {
+    try {
+      const { data } = await signIn({ username, password });
+      console.log(data);
+    } catch(e) {
+      console.log(e);
+    }
   };
 
   return (
