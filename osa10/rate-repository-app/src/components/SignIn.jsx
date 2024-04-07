@@ -2,10 +2,8 @@ import { StyleSheet, View, Button } from 'react-native';
 import { Formik } from 'formik';
 import FormikTextInput from './TextInput';
 import useSignIn from '../hooks/useSignIn';
-import AuthStorage from '../utils/authStorage';
 import * as yup from 'yup';
-
-const authStorage = new AuthStorage();
+import { useNavigate } from 'react-router-native';
 
 const styles = StyleSheet.create({
   container: { 
@@ -46,23 +44,17 @@ const LoginForm = ({ onSubmit }) => {
 const SignIn = () => {
   const [signIn] = useSignIn();
 
+  const navigate = useNavigate();
+
   const onSubmit = async ({ username, password }) => {
-
-    const currentToken = await authStorage.getAccessToken();
-    console.log('current token: ', currentToken);
-
     try {
       const result = await signIn({ username, password });
-      console.log('Auth result: ', result);
 
-      if (result.data) {
-        const token = result.data?.authenticate?.accessToken;
-        console.log('new token: ', token);
-
-        authStorage.setAccessToken(token);
+      if (result) {
+        navigate('/');
       }
     } catch(e) {
-      console.log('signIn error: ', e);
+      console.log(e);
     }
   };
 
