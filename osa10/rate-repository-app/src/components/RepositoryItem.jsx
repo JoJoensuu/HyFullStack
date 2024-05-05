@@ -1,5 +1,7 @@
+import * as Linking from 'expo-linking';
 import React from 'react';
-import { Text, View, StyleSheet, Image } from 'react-native';
+import { Text, View, StyleSheet, Image, Button } from 'react-native';
+import { Link } from 'react-router-native';
 
 const styles = StyleSheet.create({
   topRow: {
@@ -45,31 +47,27 @@ const styles = StyleSheet.create({
   }
 })
 
-interface IRepositoryItem {
-  item: {
-    fullName: string;
-    description: string;
-    language: string;
-    stargazersCount: number;
-    forksCount: number;
-    reviewCount: number;
-    ratingAverage: number;
-    ownerAvatarUrl: string;
-  }
-}
-
-export const RepositoryItem: React.FC<IRepositoryItem> = ({ item }) => {
+export const RepositoryItem = ({ item, showButton }) => {
     return (
         <View testID="repositoryItem" style={styles.itemMain}>
           <View style={styles.topRow}>
-            <Image
-              style={styles.avatarImage}
-              source={{
-                uri: item.ownerAvatarUrl,
-              }}
-            />
+              <Image
+                style={styles.avatarImage}
+                source={{
+                  uri: item.ownerAvatarUrl,
+                }}
+              />
             <View style={styles.nameBar}>
-              <Text style={styles.fullName}>{item.fullName}</Text>
+              {showButton ?
+                <Text style={styles.fullName}>
+                  {item.fullName}
+                </Text>
+                :
+                <Link to={`/repositories/${item.id}`}>
+                  <Text style={styles.fullName}>
+                    {item.fullName}
+                  </Text>
+                </Link>}
               <Text style={styles.description}>{item.description}</Text>
               <View style={styles.languageBlock}>
                 <Text style={styles.language}>{item.language}</Text>
@@ -95,6 +93,9 @@ export const RepositoryItem: React.FC<IRepositoryItem> = ({ item }) => {
                 <Text>Rating</Text>
               </View>
           </View>
+          {showButton && (
+            <Button title="Open in GitHub" onPress={() => Linking.openURL(item.url)} />
+          )}
         </View>
       );
 }
