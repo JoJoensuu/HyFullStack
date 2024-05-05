@@ -1,9 +1,8 @@
-import { View, StyleSheet, ScrollView, Pressable, Text } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Link } from 'react-router-native';
 import Constants from 'expo-constants';
 import AppBarTab from './AppBarTab';
-import { useApolloClient, useQuery } from '@apollo/client';
-import { ME } from '../graphql/queries';
+import { useApolloClient } from '@apollo/client';
 import useAuthStorage from '../hooks/useAuthStorage';
 import useUser from '../hooks/useUser';
 
@@ -33,7 +32,7 @@ const AppBar = () => {
             </Link>
             {user ? (
               <Pressable onPress={handleSignOut}>
-                <Text>Sign out</Text>
+                <AppBarTab text={'Sign out'} />
               </Pressable>
             ) : (
               <Link to="/signin">

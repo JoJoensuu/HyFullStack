@@ -60,7 +60,7 @@ interface IRepositoryItem {
 
 export const RepositoryItem: React.FC<IRepositoryItem> = ({ item }) => {
     return (
-        <View style={styles.itemMain}>
+        <View testID="repositoryItem" style={styles.itemMain}>
           <View style={styles.topRow}>
             <Image
               style={styles.avatarImage}
