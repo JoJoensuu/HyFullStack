@@ -30,6 +30,9 @@ const AppBar = () => {
             <Link to="/">
                 <AppBarTab text={'Repositories'}/>
             </Link>
+            <Link to="/review">
+                <AppBarTab text={'Create a review'}/>
+            </Link>
             {user ? (
               <Pressable onPress={handleSignOut}>
                 <AppBarTab text={'Sign out'} />
