@@ -54,6 +54,7 @@ export const GET_SINGLE_REPOSITORY = gql`
 export const ME = gql`
   query Me {
     me {
+      id
       username
     }
   }
